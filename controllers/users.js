@@ -33,13 +33,16 @@ const getUser = (req, res) => {
 // создать юзера
 const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
-  const user = {
-    name,
-    about,
-    avatar,
-  };
-  User.create(user)
-    .then(() => res.status(201).send({ data: user }))
+  User.create({ name, about, avatar })
+    .then((user) => {
+      const { _id } = user;
+      res.status(201).send({
+        name,
+        about,
+        avatar,
+        _id,
+      });
+    })
     .catch((err) => {
       // console.log('err =>', err);
       const message = Object.values(err.errors).map((error) => error.message).join('; ');
