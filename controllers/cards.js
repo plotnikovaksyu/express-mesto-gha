@@ -1,4 +1,5 @@
 const Card = require('../models/cards');
+const User = require('../models/users');
 
 // получить все карточки
 const getCards = (req, res) => {
@@ -14,13 +15,20 @@ const getCards = (req, res) => {
 // создать новую карточку
 const createCard = (req, res) => {
   const { name, link } = req.body;
-  const card = {
+  Card.create({
     name,
     link,
     owner: req.user._id,
-  };
-  Card.create(card)
-    .then(() => res.status(201).send({ data: card }))
+  })
+    .then((card) => {
+      const { _id } = card;
+      res.status(201).send({
+        name,
+        link,
+        owner: req.user._id,
+        _id,
+      });
+    })
     .catch((err) => {
       const message = Object.values(err.errors).map((error) => error.message).join('; ');
       if (err.name === 'ValidationError') {
@@ -63,15 +71,33 @@ const putLikes = (req, res) => {
 };
 
 // удалить лайк
+// const deleteLikes = (req, res) => {
+//   Card.findByIdAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, { new: true })
+//     .then((card) => res.send(card))
+//     .catch((err) => {
+//       if (err.name === 'CastError') {
+//         res.status(404).send({ message: 'Карточка не найдена' });
+//       } else {
+//         res.status(500).send({ message: 'Ошибка 500' });
+//       }
+//     });
+// };
+
 const deleteLikes = (req, res) => {
-  Card.findByIdAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, { new: true })
-    .then((card) => res.send(card))
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        res.status(404).send({ message: 'Карточка не найдена' });
-      } else {
-        res.status(500).send({ message: 'Ошибка 500' });
-      }
+  User.findById(req.user._id)
+    .then((user) => {
+      Card.findByIdAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, { new: true })
+        .then((card) => res.send(card))
+        .catch((err) => {
+          if (err.name === 'CastError') {
+            res.status(404).send({ message: 'Карточка не найдена' });
+          } else {
+            res.status(500).send({ message: 'Ошибка 500' });
+          }
+        });
+    })
+    .catch(() => {
+      res.status(400).send({ message: 'Карточка не найдена' });
     });
 };
 

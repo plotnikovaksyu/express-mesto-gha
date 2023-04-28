@@ -14,16 +14,14 @@ const getUsers = (req, res) => {
 // получить юзера по id
 const getUser = (req, res) => {
   User.findById(req.params.userId)
-    .orFail(() => {
-      throw new Error('Not found');
-    })
     .then((user) => {
-      res.send({ data: user });
+      if (user) return res.send({ data: user });
+      throw new Error('Пользователь не найдет');
     })
     .catch((err) => {
       // console.log('err =>', err.name);
       if (err.name === 'CastError') {
-        res.status(404).send({ message: 'Пользователь не найден' });
+        res.status(404).send({ message: 'ID не существует' });
       } else {
         res.status(500).send({ message: 'Ошибка 500' });
       }
