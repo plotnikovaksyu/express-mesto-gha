@@ -12,16 +12,34 @@ const getUsers = (req, res) => {
 };
 
 // получить юзера по id
+// const getUser = (req, res) => {
+//   User.findById(req.params.userId)
+//     .then((user) => {
+//       if (user) return res.send({ data: user });
+//       throw new Error('Пользователь не найдет');
+//     })
+//     .catch((err) => {
+//       // console.log('err =>', err.name);
+//       if (err.name === 'CastError') {
+//         res.status(404).send({ message: 'ID не существует' });
+//       } else {
+//         res.status(500).send({ message: 'Ошибка 500' });
+//       }
+//     });
+// };
 const getUser = (req, res) => {
   User.findById(req.params.userId)
     .then((user) => {
-      if (user) return res.send({ data: user });
-      throw new Error('Пользователь не найдет');
+      if (user) {
+        res.send({ data: user });
+      } else {
+        res.status(404).send({ message: 'Пользователь по указанному _id не найден.' });
+      }
     })
     .catch((err) => {
       // console.log('err =>', err.name);
       if (err.name === 'CastError') {
-        res.status(404).send({ message: 'ID не существует' });
+        res.status(400).send({ message: 'Переданы некорректные данные' });
       } else {
         res.status(500).send({ message: 'Ошибка 500' });
       }
@@ -29,44 +47,17 @@ const getUser = (req, res) => {
 };
 
 // создать юзера
-// const createUser = (req, res) => {
-//   const { name, about, avatar } = req.body;
-//   User.create({ name, about, avatar })
-//     .then((user) => {
-//       const { _id } = user;
-//       res.status(201).send({
-//         name,
-//         about,
-//         avatar,
-//         _id,
-//       });
-//     })
-//     .catch((err) => {
-//       // console.log('err =>', err);
-//       const message = Object.values(err.errors).map((error) => error.message).join('; ');
-//       if (err.name === 'ValidationError') {
-//         res.status(400).send({ message });
-//       } else {
-//         res.status(500).send({ message });
-//       }
-//     });
-// };
-
 const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
   User.create({ name, about, avatar })
     .then((user) => {
       const { _id } = user;
-      if (user) {
-        res.status(201).send({
-          name,
-          about,
-          avatar,
-          _id,
-        });
-      } else {
-        res.status(400).send({ message: 'Переданы некорректные данные' });
-      }
+      res.status(201).send({
+        name,
+        about,
+        avatar,
+        _id,
+      });
     })
     .catch((err) => {
       // console.log('err =>', err);
