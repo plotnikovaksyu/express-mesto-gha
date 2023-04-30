@@ -83,7 +83,7 @@ const putLikes = (req, res) => {
 // удалить лайк
 const deleteLikes = (req, res) => {
   User.findById(req.user._id)
-    .then((user) => {
+    .then(() => {
       Card.findByIdAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, { new: true })
         .then((card) => {
           if (card) {
