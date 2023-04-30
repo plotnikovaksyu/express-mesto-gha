@@ -1,5 +1,9 @@
 const User = require('../models/users');
 
+const NOT_FOUND_ERROR = 404;
+const BAD_REQUEST_ERROR = 400;
+const DEFAULT_ERROR = 500;
+
 // получить всех юзеров
 const getUsers = (req, res) => {
   User.find()
@@ -7,7 +11,7 @@ const getUsers = (req, res) => {
       res.status(200).send({ data: user });
     })
     .catch(() => {
-      res.status(500).send({ message: 'Ошибка 500' });
+      res.status(DEFAULT_ERROR).send({ message: 'Ошибка по-умолчанию' });
     });
 };
 
@@ -18,15 +22,15 @@ const getUser = (req, res) => {
       if (user) {
         res.send({ data: user });
       } else {
-        res.status(404).send({ message: 'Пользователь по указанному _id не найден.' });
+        res.status(NOT_FOUND_ERROR).send({ message: 'Пользователь по указанному _id не найден.' });
       }
     })
     .catch((err) => {
       // console.log('err =>', err.name);
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Переданы некорректные данные' });
+        res.status(BAD_REQUEST_ERROR).send({ message: 'Переданы некорректные данные' });
       } else {
-        res.status(500).send({ message: 'Ошибка 500' });
+        res.status(DEFAULT_ERROR).send({ message: 'Ошибка по-умолчанию' });
       }
     });
 };
@@ -40,11 +44,11 @@ const createUser = (req, res) => {
     })
     .catch((err) => {
       // console.log('err =>', err);
-      const message = Object.values(err.errors).map((error) => error.message).join('; ');
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message });
+        const message = Object.values(err.errors).map((error) => error.message).join('; ');
+        res.status(BAD_REQUEST_ERROR).send({ message });
       } else {
-        res.status(500).send({ message });
+        res.status(DEFAULT_ERROR).send({ message: 'Ошибка по-умолчанию' });
       }
     });
 };
@@ -57,15 +61,15 @@ const updateUserInfo = (req, res) => {
       if (user) {
         res.send(user);
       } else {
-        res.status(404).send({ message: 'Пользователь не найден' });
+        res.status(NOT_FOUND_ERROR).send({ message: 'Пользователь не найден' });
       }
     })
     .catch((err) => {
       // console.log('err =>', err.name);
       if (err.name === 'CastError' || err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Переданы некорректные данные' });
+        res.status(BAD_REQUEST_ERROR).send({ message: 'Переданы некорректные данные' });
       } else {
-        res.status(500).send({ message: 'Ошибка 500' });
+        res.status(DEFAULT_ERROR).send({ message: 'Ошибка по-умолчанию' });
       }
     });
 };
@@ -78,15 +82,15 @@ const updateAvatar = (req, res) => {
       if (user) {
         res.send(user);
       } else {
-        res.status(404).send({ message: 'Пользователь не найден' });
+        res.status(NOT_FOUND_ERROR).send({ message: 'Пользователь не найден' });
       }
     })
     .catch((err) => {
       // console.log('err =>', err.name);
       if (err.name === 'CastError' || err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Переданы некорректные данные' });
+        res.status(BAD_REQUEST_ERROR).send({ message: 'Переданы некорректные данные' });
       } else {
-        res.status(500).send({ message: 'Ошибка 500' });
+        res.status(DEFAULT_ERROR).send({ message: 'Ошибка по-умолчанию' });
       }
     });
 };

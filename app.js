@@ -1,10 +1,11 @@
 const express = require('express');
 
 const app = express();
-const { PORT } = process.env;
+const { PORT = 3000 } = process.env;
 const mongoose = require('mongoose');
 const { usersRoter } = require('./routes/users');
 const { cardsRoter } = require('./routes/cards');
+const { limiter } = require('./middleware/rate-limiter');
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
@@ -23,6 +24,8 @@ app.use(cardsRoter);
 app.all('*', (req, res) => {
   res.status(404).send({ message: 'Запрашиваемая страница не существует' });
 });
+
+app.use(limiter);
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
