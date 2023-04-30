@@ -50,18 +50,6 @@ const createUser = (req, res) => {
 };
 
 // обновить данные профиля
-// const updateUserInfo = (req, res) => {
-//   const { name, about } = req.body;
-//   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true })
-//     .then((user) => res.send(user))
-//     .catch((err) => {
-//       if (err.name === 'CastError') {
-//         res.status(400).send({ message: 'Пользователь не найден' });
-//       } else {
-//         res.status(500).send({ message: 'Ошибка 500' });
-//       }
-//     });
-// };
 const updateUserInfo = (req, res) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })

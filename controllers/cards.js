@@ -40,6 +40,29 @@ const createCard = (req, res) => {
 };
 
 // удалить карточку
+// const deleteCard = (req, res) => {
+//   Card.findById(req.params.cardId)
+//     .then((card) => {
+//       if (JSON.stringify(req.user._id) !== JSON.stringify(card.owner)) {
+//         res.status(404).send({ message: 'Недостаточно прав для удаления карточки' });
+//       } else {
+//         Card.findByIdAndDelete(req.params.cardId)
+//           .then((deletedCard) => {
+//             if (deletedCard) {
+//               res.status(200).send(deletedCard);
+//             } else {
+//               res.status(404).send({ message: 'Карточка не найдена' });
+//             }
+//           })
+//           .catch(() => {
+//             res.status(400).send({ message: 'Переданы некорректные данные' });
+//           });
+//       }
+//     })
+//     .catch(() => {
+//       res.status(500).send({ message: 'Ошибка 500' });
+//     });
+// };
 const deleteCard = (req, res) => {
   Card.findById(req.params.cardId)
     .then((card) => {
@@ -48,19 +71,15 @@ const deleteCard = (req, res) => {
       } else {
         Card.findByIdAndDelete(req.params.cardId)
           .then((deletedCard) => {
-            if (deletedCard) {
-              res.status(200).send(deletedCard);
-            } else {
-              res.status(404).send({ message: 'Карточка не найдена' });
-            }
+            res.status(200).send(deletedCard);
           })
           .catch(() => {
-            res.status(400).send({ message: 'Переданы некорректные данные' });
+            res.status(400).send({ message: 'Некорректно переданы данные' });
           });
       }
     })
     .catch(() => {
-      res.status(500).send({ message: 'Ошибка 500' });
+      res.status(404).send({ message: 'Карточка не найдена' });
     });
 };
 
