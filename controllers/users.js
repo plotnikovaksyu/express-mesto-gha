@@ -12,21 +12,6 @@ const getUsers = (req, res) => {
 };
 
 // получить юзера по id
-// const getUser = (req, res) => {
-//   User.findById(req.params.userId)
-//     .then((user) => {
-//       if (user) return res.send({ data: user });
-//       throw new Error('Пользователь не найдет');
-//     })
-//     .catch((err) => {
-//       // console.log('err =>', err.name);
-//       if (err.name === 'CastError') {
-//         res.status(404).send({ message: 'ID не существует' });
-//       } else {
-//         res.status(500).send({ message: 'Ошибка 500' });
-//       }
-//     });
-// };
 const getUser = (req, res) => {
   User.findById(req.params.userId)
     .then((user) => {
@@ -74,7 +59,13 @@ const createUser = (req, res) => {
 const updateUserInfo = (req, res) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true })
-    .then((user) => res.send(user))
+    .then((user) => {
+      if (user) {
+        res.send(user);
+      } else {
+        res.status(400).send({ message: 'Переданы некорректные данные' });
+      }
+    })
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(404).send({ message: 'Пользователь не найден' });

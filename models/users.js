@@ -15,6 +15,7 @@ const userSchema = new mongoose.Schema({
   },
   avatar: {
     type: String,
+    required: [true, 'Обязательное поле для заполнения'],
     validate: {
       validator(v) {
         return /^(https?:\/\/)?([\da-z.-]+).([a-z.]{2,6})([/\w.-]*)*\/?$/g.test(v);
