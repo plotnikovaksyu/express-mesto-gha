@@ -53,11 +53,11 @@ const deleteCard = (req, res) => {
             } else {
               res.status(404).send({ message: 'Карточка не найдена' });
             }
+          })
+          .catch(() => {
+            res.status(400).send({ message: 'Переданы некорректные данные' });
           });
       }
-    })
-    .catch(() => {
-      res.status(400).send({ message: 'Переданы некорректные данные' });
     });
 };
 
