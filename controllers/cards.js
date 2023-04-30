@@ -72,14 +72,15 @@ const deleteCard = (req, res) => {
         Card.findByIdAndDelete(req.params.cardId)
           .then((deletedCard) => {
             res.status(200).send(deletedCard);
-          })
-          .catch(() => {
-            res.status(400).send({ message: 'Некорректно переданы данные' });
           });
       }
     })
-    .catch(() => {
-      res.status(404).send({ message: 'Карточка не найдена' });
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(404).send({ message: 'Карточка не найдена' });
+      } else {
+        res.status(400).send({ message: 'Некорректно переданы данные' });
+      }
     });
 };
 
