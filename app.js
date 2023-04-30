@@ -20,6 +20,10 @@ app.use(usersRoter);
 
 app.use(cardsRoter);
 
+app.all('*', (req, res) => {
+  res.status(404).send({ message: 'Запрашиваемая страница не существует' });
+});
+
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
 });
