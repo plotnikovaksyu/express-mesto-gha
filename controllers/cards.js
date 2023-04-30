@@ -60,10 +60,16 @@ const deleteCard = (req, res) => {
 // поставить лайк
 const putLikes = (req, res) => {
   Card.findByIdAndUpdate(req.params.cardId, { $addToSet: { likes: req.user._id } }, { new: true })
-    .then((card) => res.send(card))
+    .then((card) => {
+      if (card) {
+        res.send(card);
+      } else {
+        res.status(404).send({ message: 'Карточка не найдена' });
+      }
+    })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(404).send({ message: 'Карточка не найдена' });
+        res.status(400).send({ message: 'Переданы некорректные данные' });
       } else {
         res.status(500).send({ message: 'Ошибка 500' });
       }
