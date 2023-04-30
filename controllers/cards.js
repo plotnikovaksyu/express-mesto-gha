@@ -48,12 +48,16 @@ const deleteCard = (req, res) => {
       } else {
         Card.findByIdAndDelete(req.params.cardId)
           .then((deletedCard) => {
-            res.status(200).send(deletedCard);
+            if (deletedCard) {
+              res.status(200).send(deletedCard);
+            } else {
+              res.status(404).send({ message: 'Карточка не найдена' });
+            }
           });
       }
     })
     .catch(() => {
-      res.status(500).send({ message: 'Ошибка 500' });
+      res.status(400).send({ message: 'Переданы некорректные данные' });
     });
 };
 
@@ -77,26 +81,20 @@ const putLikes = (req, res) => {
 };
 
 // удалить лайк
-// const deleteLikes = (req, res) => {
-//   Card.findByIdAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, { new: true })
-//     .then((card) => res.send(card))
-//     .catch((err) => {
-//       if (err.name === 'CastError') {
-//         res.status(404).send({ message: 'Карточка не найдена' });
-//       } else {
-//         res.status(500).send({ message: 'Ошибка 500' });
-//       }
-//     });
-// };
-
 const deleteLikes = (req, res) => {
   User.findById(req.user._id)
     .then((user) => {
       Card.findByIdAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, { new: true })
-        .then((card) => res.send(card))
+        .then((card) => {
+          if (card) {
+            res.send(card);
+          } else {
+            res.status(404).send({ message: 'Карточка не найдена' });
+          }
+        })
         .catch((err) => {
           if (err.name === 'CastError') {
-            res.status(404).send({ message: 'Карточка не найдена' });
+            res.status(400).send({ message: 'Переданы некорректные данные' });
           } else {
             res.status(500).send({ message: 'Ошибка 500' });
           }
