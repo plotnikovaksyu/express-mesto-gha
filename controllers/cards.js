@@ -97,7 +97,7 @@ const deleteLikes = (req, res) => {
         });
     })
     .catch(() => {
-      res.status(400).send({ message: 'Карточка не найдена' });
+      res.status(400).send({ message: 'Лайк пользователя не найден' });
     });
 };
 

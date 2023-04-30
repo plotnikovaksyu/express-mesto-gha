@@ -29,17 +29,44 @@ const getUser = (req, res) => {
 };
 
 // создать юзера
+// const createUser = (req, res) => {
+//   const { name, about, avatar } = req.body;
+//   User.create({ name, about, avatar })
+//     .then((user) => {
+//       const { _id } = user;
+//       res.status(201).send({
+//         name,
+//         about,
+//         avatar,
+//         _id,
+//       });
+//     })
+//     .catch((err) => {
+//       // console.log('err =>', err);
+//       const message = Object.values(err.errors).map((error) => error.message).join('; ');
+//       if (err.name === 'ValidationError') {
+//         res.status(400).send({ message });
+//       } else {
+//         res.status(500).send({ message });
+//       }
+//     });
+// };
+
 const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
   User.create({ name, about, avatar })
     .then((user) => {
       const { _id } = user;
-      res.status(201).send({
-        name,
-        about,
-        avatar,
-        _id,
-      });
+      if (user) {
+        res.status(201).send({
+          name,
+          about,
+          avatar,
+          _id,
+        });
+      } else {
+        res.status(400).send({ message: 'Переданы некорректные данные' });
+      }
     })
     .catch((err) => {
       // console.log('err =>', err);
