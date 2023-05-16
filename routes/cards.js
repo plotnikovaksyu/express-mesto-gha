@@ -6,9 +6,11 @@ const {
   putLikes,
   deleteLikes,
 } = require('../controllers/cards');
+const auth = require('../middleware/auth');
 
 const cardsRoter = express.Router();
 
+cardsRoter.use(auth);
 cardsRoter.get('/cards', getCards);
 cardsRoter.post('/cards', createCard);
 cardsRoter.delete('/cards/:cardId', deleteCard);
