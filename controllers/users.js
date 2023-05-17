@@ -66,7 +66,6 @@ const createUser = (req, res) => {
           email,
           _id,
         });
-        // console.log(user);
       })
       .catch((err) => {
         // console.log('err =>', err);
@@ -126,30 +125,46 @@ const updateAvatar = (req, res) => {
 // залогинить юзера
 const login = (req, res) => {
   const { email, password } = req.body;
-  return User.findUserByCredentials(email, password)
-    .then((user) => {
-      const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
-      res.send({ token });
-    })
-    .catch((err) => {
-      res.status(UNAUTHORIZED_ERROR).send({ message: err.message });
-    });
-  // User.findOne({ email }).select('+password')
+  // User.findUserByCredentials(email, password)
   //   .then((user) => {
-  //     if (!user) {
-  //       return Promise.reject(new Error('Неправильные почта или пароль'));
-  //     }
-  //     return bcrypt.compare(password, user.password);
-  //   })
-  //   .then((matched) => {
-  //     if (!matched) {
-  //       return Promise.reject(new Error('Неправильные почта или пароль'));
-  //     }
-  //     return res.send({ message: 'Всё верно!' });
+  //     const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+  //     return res.send({ token });
   //   })
   //   .catch((err) => {
   //     res.status(UNAUTHORIZED_ERROR).send({ message: err.message });
   //   });
+
+  // return User.findUserByCredentials(email, password)
+  //   .then((user) => {
+  //     const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+  //     // return res.send({ token });
+  //     res.cookie('jwt', token, {
+  //       maxAge: 3600000 * 24 * 7,
+  //       httpOnly: true,
+  //     })
+  //       .send({ jwt: token });
+  //   })
+  //   .catch((err) => {
+  //     res.status(UNAUTHORIZED_ERROR).send({ message: err.message });
+  //   });
+
+  User.findOne({ email }).select('+password')
+    .then((user) => {
+      if (!user) {
+        return Promise.reject(new Error('Неправильные почта или пароль'));
+      }
+      return bcrypt.compare(password, user.password)
+        .then((matched) => {
+          if (!matched) {
+            return Promise.reject(new Error('Неправильные почта или пароль'));
+          }
+          const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+          return res.send({ token });
+        });
+    })
+    .catch((err) => {
+      res.status(UNAUTHORIZED_ERROR).send({ message: err.message });
+    });
 };
 
 module.exports = {
