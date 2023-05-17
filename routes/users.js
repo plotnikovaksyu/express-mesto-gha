@@ -8,12 +8,16 @@ const {
   login,
 } = require('../controllers/users');
 
+const {
+  createUserValidation,
+} = require('../middleware/validation');
+
 const auth = require('../middleware/auth');
 
 const usersRoter = express.Router();
 
 usersRoter.post('/signin', login);
-usersRoter.post('/signup', createUser);
+usersRoter.post('/signup', createUserValidation, createUser);
 
 usersRoter.use(auth);
 
