@@ -4,25 +4,25 @@ const validator = require('validator');
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
-    // required: [true, 'Обязательное поле для заполнения'],
     minlength: [2, 'Недостаточно символов для поля "Имя"'],
     maxlength: [30, 'Недопустимое количество символов для поля "Имя"'],
     default: 'Жак-Ив Кусто',
   },
   about: {
     type: String,
-    // required: [true, 'Обязательное поле для заполнения'],
     minlength: [2, 'Недостаточно символов для поля "Описание"'],
     maxlength: [30, 'Недопустимое количество символов для поля "Описание"'],
     default: 'Исследователь',
   },
   avatar: {
     type: String,
-    // required: [true, 'Обязательное поле для заполнения'],
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
     validate: {
+      // validator(v) {
+      //   return /^(https?:\/\/)?([\da-z.-]+).([a-z.]{2,6})([/\w.-]*)*\/?$/g.test(v);
+      // },
       validator(v) {
-        return /^(https?:\/\/)?([\da-z.-]+).([a-z.]{2,6})([/\w.-]*)*\/?$/g.test(v);
+        return validator.isUrl(v);
       },
       message: 'Введите URL',
     },
