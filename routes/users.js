@@ -14,7 +14,9 @@ const usersRoter = express.Router();
 
 usersRoter.post('/signin', login);
 usersRoter.post('/signup', createUser);
+
 usersRoter.use(auth);
+
 usersRoter.get('/users', getUsers);
 usersRoter.get('/users/:userId', getUser);
 // usersRoter.post('/users', createUser);

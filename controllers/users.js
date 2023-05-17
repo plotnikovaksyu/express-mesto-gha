@@ -56,7 +56,17 @@ const createUser = (req, res) => {
       password: hash,
     })
       .then((user) => {
-        res.status(201).send(user);
+        // res.status(201).send(user);
+        // console.log(user);
+        const { _id } = user;
+        res.status(201).send({
+          name,
+          about,
+          avatar,
+          email,
+          _id,
+        });
+        // console.log(user);
       })
       .catch((err) => {
         // console.log('err =>', err);
