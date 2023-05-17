@@ -22,9 +22,9 @@ const userSchema = new mongoose.Schema({
       //   return /^(https?:\/\/)?([\da-z.-]+).([a-z.]{2,6})([/\w.-]*)*\/?$/g.test(v);
       // },
       validator(v) {
-        return validator.isUrl(v);
+        return validator.isURL(v);
       },
-      message: 'Введите URL',
+      message: 'Некорректная ссылка на аватар',
     },
   },
   email: {
