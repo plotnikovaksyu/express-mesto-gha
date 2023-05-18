@@ -11,6 +11,8 @@ const { cardsRoter } = require('./routes/cards');
 const { limiter } = require('./middleware/rate-limiter');
 const { createUser, login } = require('./controllers/users');
 
+const correctUrl = /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&/=]*)$/;
+
 mongoose.connect('mongodb://localhost:27017/mestodb');
 app.use(limiter);
 app.use(express.json());
@@ -21,7 +23,7 @@ app.post('/signup', celebrate({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
     avatar: Joi.string()
-      .pattern(/https?:\/\/(www\.)?[-0-9/a-z()@:%.+~#=_]+\.{1}[a-z0-9]+\b[//a-z0-9()@:%_+.~#?&=]*/mi),
+      .pattern(correctUrl),
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
   }),
