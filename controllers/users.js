@@ -6,6 +6,7 @@ const NOT_FOUND_ERROR = 404;
 const BAD_REQUEST_ERROR = 400;
 const DEFAULT_ERROR = 500;
 const UNAUTHORIZED_ERROR = 401;
+const CONFLICT_ERROR = 409;
 
 // получить всех юзеров
 const getUsers = (req, res) => {
@@ -38,7 +39,7 @@ const getUser = (req, res) => {
     });
 };
 
-// создать юзера ПАРОЛЬ ПРОХОДИТ МЕНЬШЕ 8 СИМВОЛОВ
+// создать юзера
 const createUser = (req, res) => {
   const {
     name,
@@ -56,8 +57,6 @@ const createUser = (req, res) => {
       password: hash,
     })
       .then((user) => {
-        // res.status(201).send(user);
-        // console.log(user);
         const { _id } = user;
         res.status(201).send({
           name,
@@ -70,7 +69,7 @@ const createUser = (req, res) => {
       .catch((err) => {
         // console.log('err =>', err);
         if (err.code === 11000) {
-          res.status(BAD_REQUEST_ERROR).send('Пользователь с такой почтой уже зарегистрирован');
+          res.status(CONFLICT_ERROR).send('Пользователь с такой почтой уже зарегистрирован');
         } else if (err.name === 'ValidationError') {
           const message = Object.values(err.errors).map((error) => error.message).join('; ');
           res.status(BAD_REQUEST_ERROR).send({ message });
@@ -151,12 +150,14 @@ const login = (req, res) => {
   User.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        return Promise.reject(new Error('Неправильные почта или пароль'));
+        // return Promise.reject(new Error('Неправильные почта или пароль'));
+        return res.status(UNAUTHORIZED_ERROR).send('Неправильные почта или пароль');
       }
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            return Promise.reject(new Error('Неправильные почта или пароль'));
+            // return Promise.reject(new Error('Неправильные почта или пароль'));
+            return res.status(UNAUTHORIZED_ERROR).send('Неправильные почта или пароль');
           }
           const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
           // return res.send({ token });
@@ -168,7 +169,8 @@ const login = (req, res) => {
         });
     })
     .catch((err) => {
-      res.status(UNAUTHORIZED_ERROR).send({ message: err.message });
+      // res.status(UNAUTHORIZED_ERROR).send({ message: err.message });
+      res.status(BAD_REQUEST_ERROR).send({ message: err.message });
     });
 };
 

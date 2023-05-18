@@ -21,9 +21,6 @@ const userSchema = new mongoose.Schema({
       validator(v) {
         return /^(https?:\/\/)?([\da-z.-]+).([a-z.]{2,6})([/\w.-]*)*\/?$/g.test(v);
       },
-      // validator(v) {
-      //   return validator.isURL(v);
-      // },
       message: 'Некорректная ссылка на аватар',
     },
   },
