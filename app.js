@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 const { errors } = require('celebrate');
 const { celebrate, Joi } = require('celebrate');
 const auth = require('./middleware/auth');
+const defaultError = require('./middleware/default_error');
+const NotFoundError = require('./errors/notFoundError');
 
 const app = express();
 const { PORT = 3000 } = process.env;
@@ -11,7 +13,7 @@ const { cardsRoter } = require('./routes/cards');
 const { limiter } = require('./middleware/rate-limiter');
 const { createUser, login } = require('./controllers/users');
 
-const correctUrl = /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&/=]*)$/;
+const correctUrl = require('./utils/constants');
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 app.use(limiter);
@@ -41,8 +43,11 @@ app.use(usersRoter);
 app.use(cardsRoter);
 
 app.use(errors());
-app.all('*', (req, res) => {
-  res.status(404).send({ message: 'Запрашиваемая страница не существует' });
+app.use(defaultError);
+
+app.all('*', (req, res, next) => {
+  // res.status(404).send({ message: 'Запрашиваемая страница не существует' });
+  next(new NotFoundError('Запрашиваемая страница не существует'));
 });
 
 app.listen(PORT, () => {

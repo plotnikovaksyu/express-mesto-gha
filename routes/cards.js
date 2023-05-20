@@ -8,7 +8,8 @@ const {
   deleteLikes,
 } = require('../controllers/cards');
 
-const correctUrl = /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&/=]*)$/;
+const correctUrl = require('../utils/constants');
+
 const cardsRoter = express.Router();
 
 cardsRoter.get('/cards', getCards);

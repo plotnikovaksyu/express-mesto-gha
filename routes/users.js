@@ -3,12 +3,12 @@ const { celebrate, Joi } = require('celebrate');
 const {
   getUsers,
   getUser,
-  // createUser,
   updateUserInfo,
   updateAvatar,
 } = require('../controllers/users');
 
-const correctUrl = /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&/=]*)$/;
+const correctUrl = require('../utils/constants');
+
 const usersRoter = express.Router();
 
 usersRoter.get('/users', getUsers);
