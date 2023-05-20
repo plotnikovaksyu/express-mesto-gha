@@ -12,7 +12,7 @@ const correctUrl = /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0
 const cardsRoter = express.Router();
 
 cardsRoter.get('/cards', celebrate({
-  params: Joi.object.keys({
+  params: Joi.object().keys({
     cardId: Joi.string().required().length(24).hex(),
   }),
 }), getCards);
@@ -23,17 +23,17 @@ cardsRoter.post('/cards', celebrate({
   }),
 }), createCard);
 cardsRoter.delete('/cards/:cardId', celebrate({
-  params: Joi.object.keys({
+  params: Joi.object().keys({
     cardId: Joi.string().required().length(24).hex(),
   }),
 }), deleteCard);
 cardsRoter.put('/cards/:cardId/likes', celebrate({
-  params: Joi.object.keys({
+  params: Joi.object().keys({
     cardId: Joi.string().required().length(24).hex(),
   }),
 }), putLikes);
 cardsRoter.delete('/cards/:cardId/likes', celebrate({
-  params: Joi.object.keys({
+  params: Joi.object().keys({
     cardId: Joi.string().required().length(24).hex(),
   }),
 }), deleteLikes);
