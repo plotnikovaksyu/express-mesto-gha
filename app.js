@@ -46,7 +46,6 @@ app.use(errors());
 app.use(defaultError);
 
 app.all('*', (req, res, next) => {
-  // res.status(404).send({ message: 'Запрашиваемая страница не существует' });
   next(new NotFoundError('Запрашиваемая страница не существует'));
 });
 

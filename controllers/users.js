@@ -4,7 +4,6 @@ const User = require('../models/users');
 
 const BAD_REQUEST_ERROR = require('../errors/badRequestError');
 const NOT_FOUND_ERROR = require('../errors/notFoundError');
-// const FORBIDDEN_ERROR = require('../errors/forbiddenError');
 const CONFLICT_ERROR = require('../errors/conflictError');
 const UNAUTHORIZED_ERROR = require('../errors/unauthorizedError');
 
@@ -29,7 +28,6 @@ const getUser = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        // res.status(BAD_REQUEST_ERROR).send({ message: 'Переданы некорректные данные' });
         next(new BAD_REQUEST_ERROR('Переданы некорректные данные'));
       } else {
         next(err);
@@ -109,7 +107,6 @@ const updateAvatar = (req, res, next) => {
       }
     })
     .catch((err) => {
-      // console.log('err =>', err.name);
       if (err.name === 'CastError' || err.name === 'ValidationError') {
         next(new BAD_REQUEST_ERROR('Переданы некорректные данные'));
       } else {
@@ -124,7 +121,6 @@ const login = (req, res, next) => {
   User.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        // return res.status(UNAUTHORIZED_ERROR).send({ message: 'Неправильные почта или пароль' });
         throw new UNAUTHORIZED_ERROR('Неправильные почта или пароль');
       }
       return bcrypt.compare(password, user.password)

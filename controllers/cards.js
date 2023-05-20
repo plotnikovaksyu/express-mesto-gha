@@ -4,12 +4,6 @@ const BAD_REQUEST_ERROR = require('../errors/badRequestError');
 const NOT_FOUND_ERROR = require('../errors/notFoundError');
 const FORBIDDEN_ERROR = require('../errors/forbiddenError');
 
-// const {
-//   NOT_FOUND_ERROR,
-//   BAD_REQUEST_ERROR,
-//   DEFAULT_ERROR,
-// } = require('../utils/constants');
-
 // получить все карточки
 const getCards = (req, res, next) => {
   Card.find()
@@ -17,7 +11,6 @@ const getCards = (req, res, next) => {
       res.send({ data: card });
     })
     .catch(next);
-  // res.status(DEFAULT_ERROR).send({ message: 'Ошибка по-умолчанию' });
 };
 
 // создать новую карточку
@@ -40,10 +33,8 @@ const createCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         const message = Object.values(err.errors).map((error) => error.message).join('; ');
-        // res.status(BAD_REQUEST_ERROR).send({ message });
         next(new BAD_REQUEST_ERROR({ message }));
       } else {
-        // res.status(DEFAULT_ERROR).send({ message: 'Ошибка по-умолчанию' });
         next(err);
       }
     });
@@ -54,7 +45,6 @@ const deleteCard = (req, res, next) => {
   Card.findById(req.params.cardId)
     .then((card) => {
       if (JSON.stringify(req.user._id) !== JSON.stringify(card.owner)) {
-        // res.status(403).send({ message: 'Недостаточно прав для удаления карточки' });
         next(new FORBIDDEN_ERROR('Недостаточно прав для удаления карточки'));
       } else {
         Card.findByIdAndDelete(req.params.cardId)
@@ -65,10 +55,8 @@ const deleteCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        // res.status(BAD_REQUEST_ERROR).send({ message: 'Карточка не найдена' });
         next(new BAD_REQUEST_ERROR('Карточка не найдена'));
       } else {
-        // res.status(NOT_FOUND_ERROR).send({ message: 'Переданы некорректные данные' });
         next(new NOT_FOUND_ERROR('Переданы некорректные данные'));
       }
     });
@@ -81,18 +69,17 @@ const putLikes = (req, res, next) => {
       if (!card) {
         throw new NOT_FOUND_ERROR('Карточка не найдена');
       } else {
-        // res.status(NOT_FOUND_ERROR).send({ message: 'Карточка не найдена' });
         res.send(card);
       }
     })
-    .catch(next)
-    // .catch((err) => {
-    //   if (err.name === 'CastError') {
-    //     res.status(BAD_REQUEST_ERROR).send({ message: 'Переданы некорректные данные' });
-    //   } else {
-    //     // res.status(DEFAULT_ERROR).send({ message: 'Ошибка по-умолчанию' });
-    //   }
-    // });
+
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new BAD_REQUEST_ERROR('Переданы некорректные данные'));
+      } else {
+        next(err);
+      }
+    });
 };
 
 // удалить лайк
@@ -105,14 +92,13 @@ const deleteLikes = (req, res, next) => {
         res.send(card);
       }
     })
-    .catch(next);
-  // .catch((err) => {
-  //   if (err.name === 'CastError') {
-  //     res.status(BAD_REQUEST_ERROR).send({ message: 'Переданы некорректные данные' });
-  //   } else {
-  //     res.status(DEFAULT_ERROR).send({ message: 'Ошибка по-умолчанию' });
-  //   }
-  // });
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new BAD_REQUEST_ERROR('Переданы некорректные данные'));
+      } else {
+        next(err);
+      }
+    });
 };
 
 module.exports = {
