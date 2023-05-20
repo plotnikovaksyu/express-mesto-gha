@@ -12,7 +12,7 @@ const correctUrl = /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0
 const usersRoter = express.Router();
 
 usersRoter.get('/users', getUsers);
-usersRoter.get('/me', getUsers);
+usersRoter.get('/users/me', getUsers);
 usersRoter.get('/users/:userId', celebrate({
   params: Joi.object().keys({
     userId: Joi.string().required().length(24).hex(),
