@@ -46,8 +46,10 @@ const createCard = (req, res) => {
 const deleteCard = (req, res) => {
   Card.findById(req.params.cardId)
     .then((card) => {
-      if (!card) {
-        res.status(NOT_FOUND_ERROR).send({ message: 'Карточка не найдена' });
+      if (card) {
+        if (JSON.stringify(req.user._id) !== JSON.stringify(card.owner)) {
+          res.status(NOT_FOUND_ERROR).send({ message: 'Карточка не найдена' });
+        }
       } else {
         Card.findByIdAndDelete(req.params.cardId)
           .then((deletedCard) => {
