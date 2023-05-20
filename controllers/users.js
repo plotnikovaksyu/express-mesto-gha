@@ -30,7 +30,6 @@ const getUser = (req, res) => {
       }
     })
     .catch((err) => {
-      // console.log('err =>', err.name);
       if (err.name === 'CastError') {
         res.status(BAD_REQUEST_ERROR).send({ message: 'Переданы некорректные данные' });
       } else {
@@ -48,6 +47,7 @@ const createUser = (req, res) => {
     email,
     password,
   } = req.body;
+
   bcrypt.hash(password, 10)
     .then((hash) => User.create({
       name,
@@ -58,7 +58,7 @@ const createUser = (req, res) => {
     })
       .then((user) => {
         const { _id } = user;
-        res.status(201).send({
+        return res.status(201).send({
           name,
           about,
           avatar,
@@ -67,9 +67,8 @@ const createUser = (req, res) => {
         });
       })
       .catch((err) => {
-        // console.log('err =>', err);
         if (err.code === 11000) {
-          res.status(CONFLICT_ERROR).send('Пользователь с такой почтой уже зарегистрирован');
+          res.status(CONFLICT_ERROR).send({ message: 'Пользователь с такой почтой уже зарегистрирован' });
         } else if (err.name === 'ValidationError') {
           const message = Object.values(err.errors).map((error) => error.message).join('; ');
           res.status(BAD_REQUEST_ERROR).send({ message });
@@ -91,7 +90,6 @@ const updateUserInfo = (req, res) => {
       }
     })
     .catch((err) => {
-      // console.log('err =>', err.name);
       if (err.name === 'CastError' || err.name === 'ValidationError') {
         res.status(BAD_REQUEST_ERROR).send({ message: 'Переданы некорректные данные' });
       } else {
@@ -124,43 +122,17 @@ const updateAvatar = (req, res) => {
 // залогинить юзера
 const login = (req, res) => {
   const { email, password } = req.body;
-  // User.findUserByCredentials(email, password)
-  //   .then((user) => {
-  //     const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
-  //     return res.send({ token });
-  //   })
-  //   .catch((err) => {
-  //     res.status(UNAUTHORIZED_ERROR).send({ message: err.message });
-  //   });
-
-  // return User.findUserByCredentials(email, password)
-  //   .then((user) => {
-  //     const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
-  //     // return res.send({ token });
-  //     res.cookie('jwt', token, {
-  //       maxAge: 3600000 * 24 * 7,
-  //       httpOnly: true,
-  //     })
-  //       .send({ jwt: token });
-  //   })
-  //   .catch((err) => {
-  //     res.status(UNAUTHORIZED_ERROR).send({ message: err.message });
-  //   });
-
   User.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        // return Promise.reject(new Error('Неправильные почта или пароль'));
         return res.status(UNAUTHORIZED_ERROR).send('Неправильные почта или пароль');
       }
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            // return Promise.reject(new Error('Неправильные почта или пароль'));
             return res.status(UNAUTHORIZED_ERROR).send('Неправильные почта или пароль');
           }
           const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
-          // return res.send({ token });
           return res.cookie('jwt', token, {
             maxAge: 3600000 * 24 * 7,
             httpOnly: true,
@@ -169,7 +141,6 @@ const login = (req, res) => {
         });
     })
     .catch((err) => {
-      // res.status(UNAUTHORIZED_ERROR).send({ message: err.message });
       res.status(BAD_REQUEST_ERROR).send({ message: err.message });
     });
 };

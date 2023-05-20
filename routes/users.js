@@ -3,7 +3,7 @@ const { celebrate, Joi } = require('celebrate');
 const {
   getUsers,
   getUser,
-  createUser,
+  // createUser,
   updateUserInfo,
   updateAvatar,
 } = require('../controllers/users');
@@ -18,14 +18,14 @@ usersRoter.get('/users/:userId', celebrate({
     userId: Joi.string().required().length(24).hex(),
   }),
 }), getUser);
-usersRoter.post('/users', celebrate({
-  body: Joi.object().keys({
-    name: Joi.string().min(2).max(30),
-    about: Joi.string().min(2).max(30),
-    avatar: Joi.string()
-      .pattern(correctUrl),
-  }),
-}), createUser);
+// usersRoter.post('/users', celebrate({
+//   body: Joi.object().keys({
+//     name: Joi.string().min(2).max(30),
+//     about: Joi.string().min(2).max(30),
+//     avatar: Joi.string()
+//       .pattern(correctUrl),
+//   }),
+// }), createUser);
 usersRoter.patch('/users/me', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
