@@ -125,12 +125,12 @@ const login = (req, res) => {
   User.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        return res.status(UNAUTHORIZED_ERROR).send('Неправильные почта или пароль');
+        return res.status(UNAUTHORIZED_ERROR).send({ message: 'Неправильные почта или пароль' });
       }
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            return res.status(UNAUTHORIZED_ERROR).send('Неправильные почта или пароль');
+            return res.status(UNAUTHORIZED_ERROR).send({ message: 'Неправильные почта или пароль' });
           }
           const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
           return res.cookie('jwt', token, {
