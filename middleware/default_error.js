@@ -10,4 +10,4 @@ const defaultError = ((err, req, res, next) => {
   next();
 });
 
-module.exports = defaultError;
+module.exports = { defaultError };

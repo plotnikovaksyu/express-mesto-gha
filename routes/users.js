@@ -7,7 +7,7 @@ const {
   updateAvatar,
 } = require('../controllers/users');
 
-const correctUrl = require('../utils/constants');
+const { correctUrl } = require('../utils/constants');
 
 const usersRoter = express.Router();
 

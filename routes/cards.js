@@ -8,7 +8,7 @@ const {
   deleteLikes,
 } = require('../controllers/cards');
 
-const correctUrl = require('../utils/constants');
+const { correctUrl } = require('../utils/constants');
 
 const cardsRoter = express.Router();
 
