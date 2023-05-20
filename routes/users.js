@@ -1,4 +1,5 @@
 const express = require('express');
+const { celebrate, Joi } = require('celebrate');
 const {
   getUsers,
   getUser,
@@ -8,26 +9,34 @@ const {
   // login,
 } = require('../controllers/users');
 
+const correctUrl = /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&/=]*)$/;
 const usersRoter = express.Router();
-
-// usersRoter.post('/signin', login);
-// usersRoter.post('/signup', celebrate({
-//   body: Joi.object().keys({
-//     name: Joi.string().required().min(2).max(30),
-//     about: Joi.string().required().min(2).max(30),
-//     avatar: Joi.string()
-// .pattern(/https?:\/\/(www\.)?[-0-9/a-z()@:%.+~#=_]+\.{1}[a-z0-9]+\b[//a-z0-9()@:%_+.~#?&=]*/mi),
-//     email: Joi.string().required().email(),
-//     password: Joi.string().required().min(8),
-//   }),
-// }), createUser);
-
-// usersRoter.use(auth);
 
 usersRoter.get('/users', getUsers);
 usersRoter.get('/users/:userId', getUser);
-usersRoter.post('/users', createUser);
-usersRoter.patch('/users/me', updateUserInfo);
-usersRoter.patch('/users/me/avatar', updateAvatar);
+usersRoter.post('/users', celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().min(2).max(30),
+    about: Joi.string().min(2).max(30),
+    avatar: Joi.string()
+      .pattern(correctUrl),
+    email: Joi.string().required().email(),
+    password: Joi.string().required().min(8),
+  }),
+}), createUser);
+usersRoter.patch('/users/me', celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().min(2).max(30),
+    about: Joi.string().min(2).max(30),
+    email: Joi.string().required().email(),
+    password: Joi.string().required().min(8),
+  }),
+}), updateUserInfo);
+usersRoter.patch('/users/me/avatar', celebrate({
+  body: Joi.object().keys({
+    avatar: Joi.string()
+      .pattern(correctUrl),
+  }),
+}), updateAvatar);
 
 module.exports = { usersRoter };
